@@ -1,0 +1,82 @@
+services:
+  next-app:
+    container_name: next-app
+    build:
+      context: ./
+      dockerfile: dev.Dockerfile
+
+    # Set environment variables directly in the compose file
+    environment:
+      ENV_VARIABLE: ${ENV_VARIABLE}
+      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/champagne_crm_dev
+      # ⭐ Force le mode dev avec Hot Reload
+      NODE_ENV: development
+      NEXT_TELEMETRY_DISABLED: 1
+      WATCHPACK_POLLING: "true"
+      # ⭐ Pour Turbopack (si vous l'utilisez)
+      TURBOPACK: "true"
+
+    # Set environment variables based on the .env file
+    env_file:
+      - .env
+    volumes:
+      # Source code
+      - ./app:/app/app                            # ✅ Lien dynamique vers votre code local
+      - ./components:/app/components
+      - ./lib:/app/lib
+      - ./hooks:/app/hooks
+      - ./types:/app/types
+      - ./public:/app/public
+
+      # Config files
+      - ./next.config.ts:/app/next.config.ts
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tailwind.config.ts:/app/tailwind.config.ts
+      - ./postcss.config.mjs:/app/postcss.config.mjs
+      - ./package.json:/app/package.json
+      - ./pnpm-lock.yaml:/app/pnpm-lock.yaml
+
+      # Prisma
+      - ./prisma:/app/prisma                      # ⭐ Ajoutez ceci
+
+      # ⭐ IMPORTANT : Exclure node_modules pour éviter les conflits
+      - /app/node_modules
+      - /app/.next
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - my_network-champagne-crm
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Add more containers below (nginx, postgres, etc.)
+  postgres:
+    container_name: postgres-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: champagne_crm_dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - my_network-champagne-crm
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  my_network-champagne-crm:
+    driver: bridge
