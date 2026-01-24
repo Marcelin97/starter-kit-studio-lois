@@ -11,7 +11,7 @@ name: CI/CD Next.js - Structure 4 Stages (Build → Analyze → Clean → Deploy
 on:
   # Quand quelqu'un pousse du code
   push:
-    branches: [ develop, staging, master ]
+    branches: [ develop, staging, master, feature/config-CI/CD ]
     paths:
       - 'src/**'          # Seulement si des fichiers dans src/ changent
       - 'app/**'
