@@ -1,0 +1,58 @@
+services:
+  next-app:
+    container_name: champagne-crm-staging
+    build:
+      context: ./
+      dockerfile: prod.Dockerfile
+      args:
+        NEXT_PUBLIC_ENV: staging
+
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL_STAGING}
+      NEXTAUTH_URL: https://staging.champagne-crm.com
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET_STAGING}
+
+    env_file:
+      - .env.staging
+
+    restart: always
+
+    ports:
+      - "3001:3000"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    networks:
+      - champagne-network
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.staging.rule=Host(`staging.champagne-crm.com`)"
+      - "traefik.http.routers.staging.tls=true"
+
+  postgres:
+    container_name: champagne-postgres-staging
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER_STAGING}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_STAGING}
+      POSTGRES_DB: ${POSTGRES_DB_STAGING}
+    volumes:
+      - postgres_staging_data:/var/lib/postgresql/data
+    networks:
+      - champagne-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_STAGING}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_staging_data:
+
+networks:
+  champagne-network:
+    driver: bridge

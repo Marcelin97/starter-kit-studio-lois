@@ -1,6 +1,6 @@
 services:
   next-app:
-    container_name: next-app
+    container_name: champagne-crm-dev
     build:
       context: ./
       dockerfile: dev.Dockerfile
@@ -19,7 +19,7 @@ services:
 
     # Set environment variables based on the .env file
     env_file:
-      - .env
+      - .env.development
     volumes:
       # Source code
       - ./app:/app/app                            # ✅ Lien dynamique vers votre code local
@@ -54,7 +54,7 @@ services:
 
   # Add more containers below (nginx, postgres, etc.)
   postgres:
-    container_name: postgres-db
+    container_name: champagne-postgres-db
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: postgres
@@ -65,7 +65,7 @@ services:
     ports:
       - 5432:5432
     networks:
-      - my_network-champagne-crm
+      - champagne-crm
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
@@ -78,5 +78,5 @@ volumes:
 # Define a network, which allows containers to communicate
 # with each other, by using their container name as a hostname
 networks:
-  my_network-champagne-crm:
+  champagne-crm:
     driver: bridge

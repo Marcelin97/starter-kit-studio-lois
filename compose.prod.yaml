@@ -1,6 +1,6 @@
 services:
   next-app:
-    container_name: next-app
+    container_name: champagne-crm-prod
     build:
       context: ./
       dockerfile: prod.Dockerfile
@@ -13,7 +13,7 @@ services:
     ports:
       - 3000:3000
     networks:
-      - my_network-champagne-crm
+      - champagne-network
     depends_on:
       postgres:
         condition: service_healthy
@@ -27,17 +27,17 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_prod_data:/var/lib/postgresql/data
     networks:
-      - my_network-champagne-crm
+      - champagne-network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER_PROD}" ]
       interval: 5s
       timeout: 5s
       retries: 5
 
 volumes:
-  postgres_data:
+  postgres_prod_data:
 
 # Define a network, which allows containers to communicate
 # with each other, by using their container name as a hostname
