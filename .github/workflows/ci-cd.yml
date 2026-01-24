@@ -133,7 +133,7 @@ jobs:
         run: npx prisma generate
 
       - name: 🗄️ Prisma DB Push (CI only)
-        run: npx prisma db push --skip-generate
+        run: npx prisma db push --accept-data-loss
         timeout-minutes: 5
 
       # 5️⃣ Build Next.js
