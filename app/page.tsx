@@ -1,6 +1,10 @@
 // C'est votre page d'accueil
 
 import Tag from "@/components/Tag/Tag";
+import { prisma } from '@/lib/prisma'
+
+export const dynamic = 'force-dynamic'
+
 
 const technologies = [
     "React",
@@ -10,7 +14,9 @@ const technologies = [
     "Tailwind CSS",
 ]
 
-export default function Home() {
+export default async function Home() {
+    const users = await prisma.user.findMany();
+
     return (
         <div className="flex items-center justify-center min-h-screen p-8 bg-[linear-gradient(135deg,#667eea_0%,#764ba2_100%)]">
             <div className="max-w-[800px] text-center text-white">
@@ -38,6 +44,13 @@ export default function Home() {
                     ))}
                 </div>
             </div>
+            <ol className="list-decimal list-inside font-[family-name:var(--font-geist-sans)]">
+                {users.map((user) => (
+                    <li key={user.id} className="mb-2">
+                        {user.name}
+                    </li>
+                ))}
+            </ol>
         </div>
     );
 }
