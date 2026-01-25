@@ -38,7 +38,7 @@ on:
         type: choice
         options:
           - production
-        default: 'master'
+        default: 'production'
       skip_tests:
         description: 'Skip tests (emergency only)'
         required: false
@@ -54,7 +54,7 @@ permissions:
   statuses: write       # Écriture des statuts de check
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
   DOCKER_BUILDKIT: 1
 
 jobs:
@@ -109,36 +109,28 @@ jobs:
           cache: 'pnpm'
 
       - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 9
 
       # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       # Cache Next.js build (accélère les builds)
       # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       - name: 💾 Cache Next.js
-        uses: actions/cache@v5.0.2  # v5.0.2
+        uses: actions/cache@v4
         with:
           path: |
             ~/.pnpm-store
             ${{ github.workspace }}/.next/cache
-            key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-            restore-keys: |
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
             ${{ runner.os }}-pnpm-
 
       # 3️⃣ Installation des dépendances
       - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # 4️⃣ Génération du client Prisma
-      - name: 🔧 Prisma Generate
-        run: pnpm prisma generate
-
-      - name: 🗄️ Prisma DB Push (CI only)
-        run: pnpm prisma db push --accept-data-loss
-        timeout-minutes: 5
-
-      # 5️⃣ Build Next.js
+      # 4️⃣ Build Next.js
       - name: 🏗️ Build Next.js
         run: pnpm run build
         env:
@@ -176,20 +168,20 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
       - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 9
 
       - name: 📦 Download build artifacts
         uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
@@ -218,20 +210,20 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
       - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 9
 
       - name: 📦 Download build artifacts
         uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
@@ -277,20 +269,20 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
       - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 9
 
       - name: 📦 Download build artifacts
         uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
@@ -327,7 +319,7 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones disabled # Nécessaire pour une analyse complète
           persist-credentials: false
@@ -339,9 +331,9 @@ jobs:
         continue-on-error: true # Optionnel : continue même si l'artefact n'est pas trouvé
 
       - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 9
 
       - name: 📊 SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@e44258b109568baa0df60ed515909fc6c72cba92  # v2.3.0
@@ -365,20 +357,20 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
       - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 9
 
       - name: 🔒 Run npm audit
         run: pnpm audit --audit-level=moderate --json > npm-audit.json
@@ -452,38 +444,38 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: 🐳 Set up Docker Buildx
-        uses: docker/setup-buildx-action@2b51285047da1547ffb1b2203d8be4c0af6b1f20  # v3.2.0
+        uses: docker/setup-buildx-action@v3
 
       - name: 🔐 Login to Docker Hub
-        uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20  # v3.1.0
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: 🏷️ Extract metadata
         id: meta
-        uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81  # v5.5.1
+        uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKER_HUB_USERNAME }}/nextjs-app
+          images: ${{ secrets.DOCKER_HUB_USERNAME }}/champagne-crm
           tags: |
             type=ref,event=branch
             type=sha,prefix=${{ github.ref_name }}-
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/master' }}
 
       - name: 🔨 Build and push
-        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0  # v5.3.0
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/nextjs-app:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/nextjs-app:buildcache,mode=max
+          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/champagne-crm:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/champagne-crm:buildcache,mode=max
           build-args: |
             BUILDKIT_INLINE_CACHE=1
         timeout-minutes: 15
@@ -500,19 +492,19 @@ jobs:
 
     environment:
       name: staging
-      url: https://staging.yourapp.com
+      url: ${{ secrets.STAGING_URL || 'https://staging.champagne-crm.com' }}
 
     permissions:
       contents: read
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - name: 🚀 Deploy to OVH Staging
-        uses: appleboy/ssh-action@029f5b4aeeeb58fdfe1410a5d17f967dacf36262  # v1.0.3
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.STAGING_HOST }}
           username: ${{ secrets.STAGING_USER }}
@@ -525,7 +517,7 @@ jobs:
             echo "🔄 Déploiement STAGING..."
             echo "📊 Context: Branch=${{ github.ref_name }}, Commit=${{ github.sha }}, Actor=${{ github.actor }}"            
             
-            cd ${{ secrets.STAGING_APP_PATH || '/var/www/app' }}
+            cd ${{ secrets.STAGING_APP_PATH || '/var/www/champagne-crm-staging' }}
             
             echo "📥 Pulling latest code..."
             git fetch origin staging
@@ -557,8 +549,9 @@ jobs:
       - name: 🏥 Health check
         run: |
           sleep 10
+          URL="${{ secrets.STAGING_URL || 'https://staging.champagne-crm.com' }}"
           for i in {1..5}; do
-            if curl -f -m 10 https://staging.yourapp.com/api/health; then
+            if curl -f -m 10 "$URL/api/health"; then
               echo "✅ Health check passed"
               exit 0
             fi
@@ -585,32 +578,34 @@ jobs:
 
     environment:
       name: production
-      url: https://yourapp.com
+      url: ${{ secrets.PROD_URL || 'https://champagne-crm.com' }}
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       # Sauvegarde de la BDD avant migration
       - name: Backup Production DB
-        uses: appleboy/ssh-action@v0.1.6
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.PROD_HOST }}
           username: ${{ secrets.PROD_USER }}
           key: ${{ secrets.PROD_SSH_KEY }}
           script: |
-            cd /var/www/ton-projet
+            cd ${{ secrets.PROD_APP_PATH || '/var/www/champagne-crm' }}
             # 1. Crée un backup local
-            docker exec -t ton-projet-db-1 pg_dump -U postgres -d prod_db > backup_$(date +%Y-%m-%d_%H-%M-%S).sql
+            docker compose exec -T postgres pg_dump -U ${{ secrets.PROD_DB_USER }} ${{ secrets.PROD_DB_NAME }} > backup_$(date +%Y-%m-%d_%H-%M-%S).sql
             # 2. Copie le backup vers OVH Object Storage
-            rclone copy backup_*.sql ovh:backups-ton-projet/
+            if command -v rclone &> /dev/null; then
+              rclone copy backup_*.sql ovh:backups-champagne-crm/
+            fi
             # 3. Supprime les backups locaux après 7 jours
-            find /var/www/ton-projet/backup_*.sql -mtime +7 -delete
+            find . -name "backup_*.sql" -mtime +7 -delete
 
       - name: 🏆 Deploy to OVH Production
-        uses: appleboy/ssh-action@029f5b4aeeeb58fdfe1410a5d17f967dacf36262  # v1.0.3
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.PROD_HOST }}
           username: ${{ secrets.PROD_USER }}
@@ -624,7 +619,7 @@ jobs:
             echo "📊 Context: Branch=${{ github.ref_name }}, Commit=${{ github.sha }}, Actor=${{ github.actor }}"
             echo "⚠️ Manual deployment: ${{ github.event_name == 'workflow_dispatch' }}"
             
-            cd ${{ secrets.PROD_APP_PATH || '/var/www/app' }}
+            cd ${{ secrets.PROD_APP_PATH || '/var/www/champagne-crm' }}
             
             echo "📥 Pulling latest code..."
             git fetch origin master
@@ -671,10 +666,10 @@ jobs:
       - name: 🏥 Production health check
         run: |
           sleep 15
-          
-          echo "🔍 Running health checks..."
+          URL="${{ secrets.PROD_URL || 'https://champagne-crm.com' }}"
+          echo "🔍 Running health checks on $URL..."
           for i in {1..10}; do
-            if curl -f -m 10 https://yourapp.com/api/health; then
+            if curl -f -m 10 "$URL/api/health"; then
               echo "✅ Health check passed on attempt $i"
               exit 0
             fi
@@ -690,6 +685,7 @@ jobs:
       - name: 📢 Deployment success summary
         if: success()
         run: |
+          URL="${{ secrets.PROD_URL || 'https://champagne-crm.com' }}"
           echo "✅ 🎉 PRODUCTION déployée avec succès!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Deployment Details" >> $GITHUB_STEP_SUMMARY
@@ -698,7 +694,7 @@ jobs:
           echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Deployed by**: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Deployment type**: ${{ github.event_name == 'workflow_dispatch' && 'Manual' || 'Automatic' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **URL**: https://yourapp.com" >> $GITHUB_STEP_SUMMARY
+          echo "- **URL**: $URL" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### ⚠️ Post-Deployment Actions" >> $GITHUB_STEP_SUMMARY
           echo "- [ ] Monitor logs for 30 minutes" >> $GITHUB_STEP_SUMMARY

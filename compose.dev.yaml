@@ -47,7 +47,7 @@ services:
     ports:
       - 3000:3000
     networks:
-      - my_network-champagne-crm
+      - champagne-network
     depends_on:
       postgres:
         condition: service_healthy
@@ -65,7 +65,7 @@ services:
     ports:
       - 5432:5432
     networks:
-      - champagne-crm
+      - champagne-network
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
@@ -78,5 +78,5 @@ volumes:
 # Define a network, which allows containers to communicate
 # with each other, by using their container name as a hostname
 networks:
-  champagne-crm:
+  champagne-network:
     driver: bridge
