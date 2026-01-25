@@ -108,6 +108,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       # Cache Next.js build (accélère les builds)
       # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -182,6 +187,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: 📦 Download build artifacts
         uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
         with:
@@ -218,6 +228,11 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: 📦 Download build artifacts
         uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
@@ -273,6 +288,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: 📦 Download build artifacts
         uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
         with:
@@ -319,6 +339,11 @@ jobs:
           name: nextjs-build-${{ github.sha }}
         continue-on-error: true # Optionnel : continue même si l'artefact n'est pas trouvé
 
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: 📊 SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@e44258b109568baa0df60ed515909fc6c72cba92  # v2.3.0
         env:
@@ -350,6 +375,11 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: 🔒 Run npm audit
         run: pnpm audit --audit-level=moderate --json > npm-audit.json
