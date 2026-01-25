@@ -126,7 +126,6 @@ jobs:
             restore-keys: |
             ${{ runner.os }}-pnpm-
 
-          key: ''
       # 3️⃣ Installation des dépendances
       - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
