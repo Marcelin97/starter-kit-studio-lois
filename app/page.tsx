@@ -19,7 +19,7 @@ export default async function Home() {
 
     return (
         <div className="flex items-center justify-center min-h-screen p-8 bg-[linear-gradient(135deg,#667eea_0%,#764ba2_100%)]">
-            <div className="max-w-[800px] text-center text-white">
+            <div className="max-w-200 text-center text-white">
                 <h1 className="text-5xl font-bold mb-4 leading-[1.2]">
                     Studio<span className="text-[#ffd700] block">Loïs</span>
                 </h1>
@@ -44,7 +44,7 @@ export default async function Home() {
                     ))}
                 </div>
             </div>
-            <ol className="list-decimal list-inside font-[family-name:var(--font-geist-sans)]">
+            <ol className="list-decimal list-inside font-(family-name:--font-geist-sans)">
                 {users.map((user) => (
                     <li key={user.id} className="mb-2">
                         {user.name}

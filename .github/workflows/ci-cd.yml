@@ -21,7 +21,6 @@ on:
       - 'prisma/**'
       - 'public/**'
       - 'package.json'
-      - 'package-lock.json'
       - 'next.config.js'
       - 'tsconfig.json'
       - '!**/*.md'        # Mais pas les fichiers Markdown
@@ -107,7 +106,7 @@ jobs:
         uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: 'pnpm'
 
       # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       # Cache Next.js build (accélère les builds)
@@ -116,29 +115,28 @@ jobs:
         uses: actions/cache@v5.0.2  # v5.0.2
         with:
           path: |
-            ~/.npm
+            ~/.pnpm-store
             ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+            key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+            restore-keys: |
+            ${{ runner.os }}-pnpm-
 
+          key: ''
       # 3️⃣ Installation des dépendances
       - name: 📦 Install dependencies
-        run: npm ci --prefer-offline --no-audit
-        # --prefer-offline : utilise le cache
-        # --no-audit : skip audit (fait séparément)
+        run: pnpm install --frozen-lockfile
 
       # 4️⃣ Génération du client Prisma
       - name: 🔧 Prisma Generate
-        run: npx prisma generate
+        run: pnpm prisma generate
 
       - name: 🗄️ Prisma DB Push (CI only)
-        run: npx prisma db push --accept-data-loss
+        run: pnpm prisma db push --accept-data-loss
         timeout-minutes: 5
 
       # 5️⃣ Build Next.js
       - name: 🏗️ Build Next.js
-        run: npm run build
+        run: pnpm run build
         env:
           # Masquer les secrets dans les logs
           NODE_ENV: production
@@ -152,7 +150,7 @@ jobs:
             .next
             node_modules/.prisma
             package.json
-            package-lock.json
+            pnpm-lock.yaml
           retention-days: 1
           if-no-files-found: error  # Fail si pas de fichiers
 
@@ -182,7 +180,7 @@ jobs:
         uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: 📦 Download build artifacts
         uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
@@ -190,11 +188,11 @@ jobs:
           name: nextjs-build-${{ github.sha }}
 
       - name: 🔍 Run ESLint
-        run: npm run lint
+        run: pnpm lint
         timeout-minutes: 5
 
       - name: 💅 Check Prettier formatting
-        run: npm run format:check
+        run: pnpm format:check
         timeout-minutes: 3
 
   # ───────────────────────────────────────────────────────────────
@@ -219,7 +217,7 @@ jobs:
         uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: 📦 Download build artifacts
         uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
@@ -227,7 +225,7 @@ jobs:
           name: nextjs-build-${{ github.sha }}
 
       - name: 📝 TypeScript Check
-        run: npx tsc --noEmit
+        run: pnpm tsc --noEmit
         timeout-minutes: 5
 
   # ───────────────────────────────────────────────────────────────
@@ -273,7 +271,7 @@ jobs:
         uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: 📦 Download build artifacts
         uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
@@ -281,7 +279,7 @@ jobs:
           name: nextjs-build-${{ github.sha }}
 
       - name: 🧪 Run tests
-        run: npm test -- --coverage --maxWorkers=2
+        run: pnpm test -- --coverage --maxWorkers=2
         timeout-minutes: 10
 
       - name: 📊 Upload coverage
@@ -351,16 +349,15 @@ jobs:
         uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
 
       - name: 🔒 Run npm audit
-        run: npm audit --audit-level=moderate --json > npm-audit.json
+        run: pnpm audit --audit-level=moderate --json > npm-audit.json
         continue-on-error: true
         timeout-minutes: 3
 
       - name: 🛡️ Run Snyk scan
         uses: snyk/actions/node@ce71ff9eda12bc48837b2855bca31364cdfa93e2  # master
-
-
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -517,7 +514,7 @@ jobs:
             docker compose pull
             
             echo "🔄 Running Prisma migrations..."
-            docker compose run --rm app npx prisma migrate deploy
+            docker compose run --rm app pnpm prisma migrate deploy
             
             echo "♻️ Restarting services..."
             docker compose up -d --build --force-recreate
@@ -626,7 +623,7 @@ jobs:
             docker compose pull
             
             echo "🔄 Running Prisma migrations..."
-            docker compose run --rm app npx prisma migrate deploy
+            docker compose run --rm app pnpm prisma migrate deploy
             
             echo "♻️ Restarting services..."
             docker compose up -d --build --force-recreate --no-deps app
