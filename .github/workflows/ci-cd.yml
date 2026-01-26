@@ -117,7 +117,7 @@ jobs:
       # Cache Next.js build (accélère les builds)
       # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       - name: 💾 Cache Next.js
-        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a  # v4.2.0 ✅
+        uses: actions/cache@1bd1e32a3bdc453d9f9a48a49a22cc3a2760f970  # v4.2.0
         with:
           path: |
             ~/.pnpm-store
