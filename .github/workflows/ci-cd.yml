@@ -117,7 +117,7 @@ jobs:
       # Cache Next.js build (accélère les builds)
       # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       - name: 💾 Cache Next.js
-        uses: actions/cache@v4
+        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a  # v4.2.0 ✅
         with:
           path: |
             ~/.pnpm-store
@@ -168,12 +168,12 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1 ✅
         with:
           persist-credentials: false
 
       - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2 ✅
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
@@ -210,12 +210,12 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1 ✅
         with:
           persist-credentials: false
 
       - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2 ✅
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
@@ -269,12 +269,12 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1 ✅
         with:
           persist-credentials: false
 
       - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2 ✅
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
@@ -319,7 +319,7 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1 ✅
         with:
           fetch-depth: 0  # Shallow clones disabled # Nécessaire pour une analyse complète
           persist-credentials: false
@@ -333,7 +333,7 @@ jobs:
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10
 
       - name: 📊 SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@e44258b109568baa0df60ed515909fc6c72cba92  # v2.3.0
@@ -357,12 +357,12 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1 ✅
         with:
           persist-credentials: false
 
       - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2 ✅
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
@@ -444,22 +444,22 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
         with:
           persist-credentials: false
 
       - name: 🐳 Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@2b51285047da1547ffb1b2203d8be4c0af6b1f20  # v3.2.0
 
       - name: 🔐 Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20  # v3.1.0
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: 🏷️ Extract metadata
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81  # v5.5.1
         with:
           images: ${{ secrets.DOCKER_HUB_USERNAME }}/champagne-crm
           tags: |
@@ -468,7 +468,7 @@ jobs:
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/master' }}
 
       - name: 🔨 Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0  # v5.3.0
         with:
           context: .
           push: true
@@ -492,19 +492,19 @@ jobs:
 
     environment:
       name: staging
-      url: ${{ secrets.STAGING_URL || 'https://staging.champagne-crm.com' }}
+      url: https://staging.champagne-crm.com
 
     permissions:
       contents: read
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
         with:
           persist-credentials: false
 
       - name: 🚀 Deploy to OVH Staging
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@029f5b4aeeeb58fdfe1410a5d17f967dacf36262  # v1.0.3
         with:
           host: ${{ secrets.STAGING_HOST }}
           username: ${{ secrets.STAGING_USER }}
@@ -549,7 +549,7 @@ jobs:
       - name: 🏥 Health check
         run: |
           sleep 10
-          URL="${{ secrets.STAGING_URL || 'https://staging.champagne-crm.com' }}"
+          URL=https://staging.champagne-crm.com
           for i in {1..5}; do
             if curl -f -m 10 "$URL/api/health"; then
               echo "✅ Health check passed"
@@ -578,11 +578,11 @@ jobs:
 
     environment:
       name: production
-      url: ${{ secrets.PROD_URL || 'https://champagne-crm.com' }}
+      url: https://champagne-crm.com
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
         with:
           persist-credentials: false
 
@@ -594,7 +594,7 @@ jobs:
           username: ${{ secrets.PROD_USER }}
           key: ${{ secrets.PROD_SSH_KEY }}
           script: |
-            cd ${{ secrets.PROD_APP_PATH || '/var/www/champagne-crm' }}
+            cd /var/www/champagne-crm
             # 1. Crée un backup local
             docker compose exec -T postgres pg_dump -U ${{ secrets.PROD_DB_USER }} ${{ secrets.PROD_DB_NAME }} > backup_$(date +%Y-%m-%d_%H-%M-%S).sql
             # 2. Copie le backup vers OVH Object Storage
@@ -605,7 +605,7 @@ jobs:
             find . -name "backup_*.sql" -mtime +7 -delete
 
       - name: 🏆 Deploy to OVH Production
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@029f5b4aeeeb58fdfe1410a5d17f967dacf36262  # v1.0.3
         with:
           host: ${{ secrets.PROD_HOST }}
           username: ${{ secrets.PROD_USER }}
@@ -666,7 +666,7 @@ jobs:
       - name: 🏥 Production health check
         run: |
           sleep 15
-          URL="${{ secrets.PROD_URL || 'https://champagne-crm.com' }}"
+          URL=https://champagne-crm.com
           echo "🔍 Running health checks on $URL..."
           for i in {1..10}; do
             if curl -f -m 10 "$URL/api/health"; then
@@ -685,7 +685,7 @@ jobs:
       - name: 📢 Deployment success summary
         if: success()
         run: |
-          URL="${{ secrets.PROD_URL || 'https://champagne-crm.com' }}"
+          URL=https://champagne-crm.com
           echo "✅ 🎉 PRODUCTION déployée avec succès!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Deployment Details" >> $GITHUB_STEP_SUMMARY
