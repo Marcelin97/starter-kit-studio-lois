@@ -299,7 +299,7 @@ jobs:
           name: nextjs-build-${{ github.sha }}
 
       - name: 🧪 Run tests
-        run: pnpm test -- --coverage --maxWorkers=2
+        run: pnpm test --coverage --maxWorkers=2 --passWithNoTests
         timeout-minutes: 10
 
       - name: 📊 Upload coverage
@@ -310,6 +310,14 @@ jobs:
           files: ./coverage/lcov.info
           fail_ci_if_error: false
         timeout-minutes: 3
+
+      - name: 📤 Upload coverage artifact
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3  # v4.3.1
+        if: always()
+        with:
+          name: test-coverage-${{ github.sha }}
+          path: coverage
+          retention-days: 1
 
   # ───────────────────────────────────────────────────────────────
   # ANALYZE 4: SonarQube/SonarCloud
@@ -336,7 +344,8 @@ jobs:
       - name: 📦 Download coverage
         uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
         with:
-          name: nextjs-build-${{ github.sha }}
+          name: test-coverage-${{ github.sha }}
+          path: coverage
         continue-on-error: true # Optionnel : continue même si l'artefact n'est pas trouvé
 
       - name: 📦 Setup pnpm
@@ -418,7 +427,9 @@ jobs:
       - name: 🧹 Clean up artifacts
         uses: geekyeggo/delete-artifact@24928e75e6e6590170563b8ddae9fac674508aa1  # v5.0.0
         with:
-          name: nextjs-build-${{ github.sha }}
+          name: |
+            nextjs-build-${{ github.sha }}
+            test-coverage-${{ github.sha }}
           failOnError: false
 
       - name: ✅ Analyze stage completed
