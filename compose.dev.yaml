@@ -22,7 +22,7 @@ services:
       - .env.development
     volumes:
       # Source code
-      - ./app:/app/app                            # ✅ Lien dynamique vers votre code local
+      - ./app:/app/app # ✅ Lien dynamique vers votre code local
       - ./components:/app/components
       - ./lib:/app/lib
       - ./hooks:/app/hooks
@@ -38,7 +38,7 @@ services:
       - ./pnpm-lock.yaml:/app/pnpm-lock.yaml
 
       # Prisma
-      - ./prisma:/app/prisma                      # ⭐ Ajoutez ceci
+      - ./prisma:/app/prisma # ⭐ Ajoutez ceci
 
       # ⭐ IMPORTANT : Exclure node_modules pour éviter les conflits
       - /app/node_modules
@@ -67,7 +67,7 @@ services:
     networks:
       - champagne-network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5

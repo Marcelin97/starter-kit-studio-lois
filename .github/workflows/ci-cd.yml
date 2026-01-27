@@ -11,36 +11,36 @@ name: CI/CD Next.js - Structure 4 Stages (Build → Analyze → Clean → Deploy
 on:
   # Quand quelqu'un pousse du code
   push:
-    branches: [ develop, staging, master,  "feature/**" ]
+    branches: [develop, staging, master, "feature/**"]
     paths:
-      - '.github/workflows/ci-cd.yml'  # ⬅️ Ajoute cette ligne
-      - 'src/**'
-      - 'app/**'
-      - 'components/**'
-      - 'lib/**'
-      - 'prisma/**'
-      - 'public/**'
-      - 'package.json'
-      - 'next.config.js'
-      - 'tsconfig.json'
-      - '!**/*.md'        # Mais pas les fichiers Markdown
+      - ".github/workflows/ci-cd.yml" # ⬅️ Ajoute cette ligne
+      - "src/**"
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "prisma/**"
+      - "public/**"
+      - "package.json"
+      - "next.config.js"
+      - "tsconfig.json"
+      - "!**/*.md" # Mais pas les fichiers Markdown
   # Quand une PR est ouverte ou mise à jour
   pull_request:
-    branches: [ develop, staging, master ]
-    types: [ opened, synchronize, reopened ]
+    branches: [develop, staging, master]
+    types: [opened, synchronize, reopened]
 
   # Déploiement manuel UNIQUEMENT pour production
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environment to deploy'
+        description: "Environment to deploy"
         required: true
         type: choice
         options:
           - production
-        default: 'production'
+        default: "production"
       skip_tests:
-        description: 'Skip tests (emergency only)'
+        description: "Skip tests (emergency only)"
         required: false
         type: boolean
         default: false
@@ -49,12 +49,12 @@ on:
 # PERMISSIONS MINIMALES (Principe du moindre privilège)
 # ═══════════════════════════════════════════════════════════════
 permissions:
-  contents: read        # Lecture du code
-  pull-requests: read   # Lecture des PRs
-  statuses: write       # Écriture des statuts de check
+  contents: read # Lecture du code
+  pull-requests: read # Lecture des PRs
+  statuses: write # Écriture des statuts de check
 
 env:
-  NODE_VERSION: '22'
+  NODE_VERSION: "22"
   DOCKER_BUILDKIT: 1
 
 jobs:
@@ -63,8 +63,8 @@ jobs:
   # ═══════════════════════════════════════════════════════════════
   build:
     name: 🏗️ BUILD - Compilation Next.js
-    runs-on: ubuntu-22.04  # Version explicite (pas 'latest')
-    timeout-minutes: 20     # Timeout recommandé pour build
+    runs-on: ubuntu-22.04 # Version explicite (pas 'latest')
+    timeout-minutes: 20 # Timeout recommandé pour build
 
     # Permissions spécifiques au job
     permissions:
@@ -97,27 +97,27 @@ jobs:
 
       # 1️⃣ Récupération du code
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
-          persist-credentials: false  # Ne pas persister les credentials
+          persist-credentials: false # Ne pas persister les credentials
       # ️2
       - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061  # v4.2.0
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
         with:
           version: 10
 
       # 2️⃣ Configuration de Node.js
       - name: ⚙️ Setup Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       # Cache Next.js build (accélère les builds)
       # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       - name: 💾 Cache Next.js
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57  # v4.2.0
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
         with:
           path: |
             ~/.pnpm-store
@@ -139,16 +139,16 @@ jobs:
           timeout-minutes: 15
 
       - name: 📦 Upload build artifacts
-        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3  # v4.3.1
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
         with:
-          name: nextjs-build-${{ github.sha }}  # Nom unique par commit
+          name: nextjs-build-${{ github.sha }} # Nom unique par commit
           path: |
             .next
             node_modules/.prisma
             package.json
             pnpm-lock.yaml
           retention-days: 1
-          if-no-files-found: error  # Fail si pas de fichiers
+          if-no-files-found: error # Fail si pas de fichiers
 
   # ═══════════════════════════════════════════════════════════════
   # STAGE 2: ANALYZE - Qualité du code
@@ -168,26 +168,26 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1 ✅
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1 ✅
         with:
           persist-credentials: false
 
       - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061  # v4.2.0
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
         with:
           version: 10
 
       - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2 ✅
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2 ✅
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: 📦 Download build artifacts
-        uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
+        uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
         with:
           name: nextjs-build-${{ github.sha }}
 
@@ -213,26 +213,26 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1 ✅
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1 ✅
         with:
           persist-credentials: false
 
       - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061  # v4.2.0
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
         with:
           version: 10
 
       - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2 ✅
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2 ✅
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: 📦 Download build artifacts
-        uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
+        uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
         with:
           name: nextjs-build-${{ github.sha }}
 
@@ -275,26 +275,26 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1 ✅
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1 ✅
         with:
           persist-credentials: false
 
       - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061  # v4.2.0
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
         with:
           version: 10
 
       - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2 ✅
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2 ✅
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: 📦 Download build artifacts
-        uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
+        uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
         with:
           name: nextjs-build-${{ github.sha }}
 
@@ -303,7 +303,7 @@ jobs:
         timeout-minutes: 10
 
       - name: 📊 Upload coverage
-        uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673  # v4.5.0
+        uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # v4.5.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -312,7 +312,7 @@ jobs:
         timeout-minutes: 3
 
       - name: 📤 Upload coverage artifact
-        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3  # v4.3.1
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
         if: always()
         with:
           name: test-coverage-${{ github.sha }}
@@ -325,7 +325,7 @@ jobs:
   analyze-sonarcloud:
     name: 📊 ANALYZE - SonarCloud
     runs-on: ubuntu-22.04
-    needs: [ build, analyze-tests ]
+    needs: [build, analyze-tests]
     timeout-minutes: 10
 
     permissions:
@@ -336,25 +336,25 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1 ✅
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1 ✅
         with:
-          fetch-depth: 0  # Shallow clones disabled # Nécessaire pour une analyse complète
+          fetch-depth: 0 # Shallow clones disabled # Nécessaire pour une analyse complète
           persist-credentials: false
 
       - name: 📦 Download coverage
-        uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
+        uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
         with:
           name: test-coverage-${{ github.sha }}
           path: coverage
         continue-on-error: true # Optionnel : continue même si l'artefact n'est pas trouvé
 
       - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061  # v4.2.0
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
         with:
           version: 10
 
       - name: 📊 SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@e44258b109568baa0df60ed515909fc6c72cba92  # v2.3.0
+        uses: SonarSource/sonarcloud-github-action@e44258b109568baa0df60ed515909fc6c72cba92 # v2.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -363,52 +363,52 @@ jobs:
   # ───────────────────────────────────────────────────────────────
   # ANALYZE 5: Security Scan
   # ───────────────────────────────────────────────────────────────
-#  analyze-security:
-#    name: 🛡️ ANALYZE - Security
-#    runs-on: ubuntu-22.04
-#    needs: build
-#    timeout-minutes: 10
-#
-#    permissions:
-#      contents: read
-#      security-events: write  # Pour SARIF upload
-#
-#    steps:
-#      - name: 📥 Checkout code
-#        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1 ✅
-#        with:
-#          persist-credentials: false
-#
-#      - name: 📦 Setup pnpm
-#        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061  # v4.2.0
-#        with:
-#          version: 10
-#
-#      - name: ⚙️ Setup Node.js
-#        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2 ✅
-#        with:
-#          node-version: ${{ env.NODE_VERSION }}
-#          cache: 'pnpm'
-#
-#      - name: 🔒 Run npm audit
-#        run: pnpm audit --audit-level=moderate --json > npm-audit.json
-#        continue-on-error: true
-#        timeout-minutes: 3
-#
-#      - name: 🛡️ Run Snyk scan
-#        uses: snyk/actions/node@ce71ff9eda12bc48837b2855bca31364cdfa93e2  # master
-#        continue-on-error: true
-#        env:
-#          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-#        with:
-#          args: --severity-threshold=high --sarif-file-output=snyk.sarif
-#        timeout-minutes: 5
-#
-#      - name: 📤 Upload SARIF to GitHub
-#        uses: github/codeql-action/upload-sarif@1b1aada464948af03b950897e5eb522f92603cc2  # v3.24.9
-#        if: always()
-#        with:
-#          sarif_file: snyk.sarif
+  #  analyze-security:
+  #    name: 🛡️ ANALYZE - Security
+  #    runs-on: ubuntu-22.04
+  #    needs: build
+  #    timeout-minutes: 10
+  #
+  #    permissions:
+  #      contents: read
+  #      security-events: write  # Pour SARIF upload
+  #
+  #    steps:
+  #      - name: 📥 Checkout code
+  #        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1 ✅
+  #        with:
+  #          persist-credentials: false
+  #
+  #      - name: 📦 Setup pnpm
+  #        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061  # v4.2.0
+  #        with:
+  #          version: 10
+  #
+  #      - name: ⚙️ Setup Node.js
+  #        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2 ✅
+  #        with:
+  #          node-version: ${{ env.NODE_VERSION }}
+  #          cache: 'pnpm'
+  #
+  #      - name: 🔒 Run npm audit
+  #        run: pnpm audit --audit-level=moderate --json > npm-audit.json
+  #        continue-on-error: true
+  #        timeout-minutes: 3
+  #
+  #      - name: 🛡️ Run Snyk scan
+  #        uses: snyk/actions/node@ce71ff9eda12bc48837b2855bca31364cdfa93e2  # master
+  #        continue-on-error: true
+  #        env:
+  #          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+  #        with:
+  #          args: --severity-threshold=high --sarif-file-output=snyk.sarif
+  #        timeout-minutes: 5
+  #
+  #      - name: 📤 Upload SARIF to GitHub
+  #        uses: github/codeql-action/upload-sarif@1b1aada464948af03b950897e5eb522f92603cc2  # v3.24.9
+  #        if: always()
+  #        with:
+  #          sarif_file: snyk.sarif
 
   # ═══════════════════════════════════════════════════════════════
   # STAGE 3: CLEAN - Nettoyage
@@ -416,16 +416,17 @@ jobs:
   clean:
     name: 🧹 CLEAN - Nettoyage
     runs-on: ubuntu-22.04
-    needs: [ analyze-eslint, analyze-typescript, analyze-tests, analyze-sonarcloud]
+    needs:
+      [analyze-eslint, analyze-typescript, analyze-tests, analyze-sonarcloud]
     if: always()
     timeout-minutes: 5
 
     permissions:
-      actions: write  # Pour supprimer les artifacts
+      actions: write # Pour supprimer les artifacts
 
     steps:
       - name: 🧹 Clean up artifacts
-        uses: geekyeggo/delete-artifact@24928e75e6e6590170563b8ddae9fac674508aa1  # v5.0.0
+        uses: geekyeggo/delete-artifact@24928e75e6e6590170563b8ddae9fac674508aa1 # v5.0.0
         with:
           name: |
             nextjs-build-${{ github.sha }}
@@ -454,32 +455,32 @@ jobs:
   deploy-docker:
     name: 🐳 DEPLOY - Build Docker Image
     runs-on: ubuntu-22.04
-    needs: [ analyze-eslint, analyze-typescript, analyze-tests ]
+    needs: [analyze-eslint, analyze-typescript, analyze-tests]
     if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
     timeout-minutes: 20
 
     permissions:
       contents: read
-      packages: write  # Pour push Docker
+      packages: write # Pour push Docker
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           persist-credentials: false
 
       - name: 🐳 Set up Docker Buildx
-        uses: docker/setup-buildx-action@2b51285047da1547ffb1b2203d8be4c0af6b1f20  # v3.2.0
+        uses: docker/setup-buildx-action@2b51285047da1547ffb1b2203d8be4c0af6b1f20 # v3.2.0
 
       - name: 🔐 Login to Docker Hub
-        uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20  # v3.1.0
+        uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20 # v3.1.0
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: 🏷️ Extract metadata
         id: meta
-        uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81  # v5.5.1
+        uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # v5.5.1
         with:
           images: ${{ secrets.DOCKER_HUB_USERNAME }}/champagne-crm
           tags: |
@@ -488,7 +489,7 @@ jobs:
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/master' }}
 
       - name: 🔨 Build and push
-        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0  # v5.3.0
+        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
         with:
           context: .
           push: true
@@ -506,7 +507,7 @@ jobs:
   deploy-staging:
     name: 🚀 DEPLOY - Staging (Auto)
     runs-on: ubuntu-22.04
-    needs: [ clean, deploy-docker ]
+    needs: [clean, deploy-docker]
     if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
     timeout-minutes: 15
 
@@ -519,51 +520,51 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           persist-credentials: false
 
       - name: 🚀 Deploy to OVH Staging
-        uses: appleboy/ssh-action@029f5b4aeeeb58fdfe1410a5d17f967dacf36262  # v1.0.3
+        uses: appleboy/ssh-action@029f5b4aeeeb58fdfe1410a5d17f967dacf36262 # v1.0.3
         with:
           host: ${{ secrets.STAGING_HOST }}
           username: ${{ secrets.STAGING_USER }}
           key: ${{ secrets.STAGING_SSH_KEY }}
           port: ${{ secrets.STAGING_PORT || 22 }}
-          script_stop: true  # Arrête si erreur
+          script_stop: true # Arrête si erreur
           command_timeout: 10m
           script: |
             set -e
             echo "🔄 Déploiement STAGING..."
             echo "📊 Context: Branch=${{ github.ref_name }}, Commit=${{ github.sha }}, Actor=${{ github.actor }}"            
-            
+
             cd ${{ secrets.STAGING_APP_PATH || '/var/www/champagne-crm-staging' }}
-            
+
             echo "📥 Pulling latest code..."
             git fetch origin staging
             git reset --hard origin/staging
-            
+
             echo "💾 Backup database..."
             BACKUP_FILE="backup-staging-$(date +%Y%m%d-%H%M%S).sql"
             docker compose exec -T postgres pg_dump -U ${{ secrets.STAGING_DB_USER }} ${{ secrets.STAGING_DB_NAME }} > $BACKUP_FILE || true
-            
+
             if command -v rclone &> /dev/null; then
               rclone copy $BACKUP_FILE ovh:backups-staging/
             fi
-            
+
             echo "🐳 Pulling Docker image..."
             docker compose pull
-            
+
             echo "🔄 Running Prisma migrations..."
             docker compose run --rm app pnpm prisma migrate deploy
-            
+
             echo "♻️ Restarting services..."
             docker compose up -d --build --force-recreate
-            
+
             echo "🧹 Cleaning up..."
             find . -name "backup-staging-*.sql" -mtime +7 -delete
             docker system prune -f
-            
+
             echo "✅ STAGING déployé avec succès!"
 
       - name: 🏥 Health check
@@ -588,21 +589,20 @@ jobs:
   deploy-production:
     name: 🏆 DEPLOY - Production
     runs-on: ubuntu-22.04
-    needs: [ clean, deploy-docker ]
+    needs: [clean, deploy-docker]
     # Seulement si workflow_dispatch OU push sur production
     #if: contains('["alice", "bob", "deploy-bot"]', github.actor) #limiter à certaine personne
     if: |
       (github.event_name == 'workflow_dispatch' && inputs.environment == 'production') ||
       (github.ref == 'refs/heads/master' && github.event_name == 'push')
     timeout-minutes: 20
-
     environment:
       name: production
       url: https://champagne-crm.com
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           persist-credentials: false
 
@@ -625,7 +625,7 @@ jobs:
             find . -name "backup_*.sql" -mtime +7 -delete
 
       - name: 🏆 Deploy to OVH Production
-        uses: appleboy/ssh-action@029f5b4aeeeb58fdfe1410a5d17f967dacf36262  # v1.0.3
+        uses: appleboy/ssh-action@029f5b4aeeeb58fdfe1410a5d17f967dacf36262 # v1.0.3
         with:
           host: ${{ secrets.PROD_HOST }}
           username: ${{ secrets.PROD_USER }}
@@ -638,47 +638,47 @@ jobs:
             echo "🚀 Déploiement PRODUCTION..."
             echo "📊 Context: Branch=${{ github.ref_name }}, Commit=${{ github.sha }}, Actor=${{ github.actor }}"
             echo "⚠️ Manual deployment: ${{ github.event_name == 'workflow_dispatch' }}"
-            
+
             cd ${{ secrets.PROD_APP_PATH || '/var/www/champagne-crm' }}
-            
+
             echo "📥 Pulling latest code..."
             git fetch origin master
             git reset --hard origin/master
-            
+
             echo "💾 BACKUP DATABASE PRODUCTION (OBLIGATOIRE)..."
             BACKUP_FILE="backup-prod-$(date +%Y%m%d-%H%M%S).sql"
             docker compose exec -T postgres pg_dump -U ${{ secrets.PROD_DB_USER }} ${{ secrets.PROD_DB_NAME }} > $BACKUP_FILE
-            
+
             if [ ! -f "$BACKUP_FILE" ]; then
               echo "❌ BACKUP FAILED - ABORT DEPLOYMENT"
               exit 1
             fi
-            
+
             BACKUP_SIZE=$(stat -f%z "$BACKUP_FILE" 2>/dev/null || stat -c%s "$BACKUP_FILE" 2>/dev/null || echo "0")
             echo "✅ Backup créé: $BACKUP_FILE (Size: $BACKUP_SIZE bytes)"
-            
+
             if command -v rclone &> /dev/null; then
               echo "☁️ Uploading backup to Object Storage..."
               rclone copy $BACKUP_FILE ovh:backups-production/
               echo "✅ Backup uploaded to cloud"
             fi
-            
+
             echo "🐳 Pulling Docker image..."
             docker compose pull
-            
+
             echo "🔄 Running Prisma migrations..."
             docker compose run --rm app pnpm prisma migrate deploy
-            
+
             echo "♻️ Restarting services..."
             docker compose up -d --build --force-recreate --no-deps app
-            
+
             echo "⏳ Waiting for app to be ready..."
             sleep 15
-            
+
             echo "🧹 Cleaning up old backups (>30 days)..."
             find . -name "backup-prod-*.sql" -mtime +30 -delete
             docker system prune -f
-            
+
             echo "✅ PRODUCTION déployé avec succès!"
             echo "💾 Backup sauvegardé: $BACKUP_FILE"
             echo "🔗 Commit: ${{ github.sha }}"
@@ -696,7 +696,7 @@ jobs:
             echo "⏳ Waiting... attempt $i/10"
             sleep 10
           done
-          
+
           echo "❌ Health check failed after 10 attempts"
           echo "⚠️ ROLLBACK RECOMMANDÉ"
           exit 1
