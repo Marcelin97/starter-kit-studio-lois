@@ -13,17 +13,18 @@ on:
   push:
     branches: [develop, staging, master, "feature/**"]
     paths:
-      - ".github/workflows/ci-cd.yml" # ⬅️ Ajoute cette ligne
-      - "src/**"
+      - ".github/workflows/ci-cd.yml"
       - "app/**"
       - "components/**"
       - "lib/**"
       - "prisma/**"
       - "public/**"
       - "package.json"
-      - "next.config.js"
+      - "next.config.ts"
       - "tsconfig.json"
-      - "!**/*.md" # Mais pas les fichiers Markdown
+      - "*.Dockerfile"
+      - "compose.*.yaml"
+      - "!**/*.md"
   # Quand une PR est ouverte ou mise à jour
   pull_request:
     branches: [develop, staging, master]
@@ -133,10 +134,10 @@ jobs:
       # 4️⃣ Build Next.js
       - name: 🏗️ Build Next.js
         run: pnpm run build
+        timeout-minutes: 15
         env:
           # Masquer les secrets dans les logs
           NODE_ENV: production
-          timeout-minutes: 15
 
       - name: 📦 Upload build artifacts
         uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
@@ -450,15 +451,17 @@ jobs:
   # ═══════════════════════════════════════════════════════════════
 
   # ───────────────────────────────────────────────────────────────
-  # DEPLOY 0: Build Docker Image (avant déploiement)
+  # DEPLOY 0: Build Docker Image
   # ───────────────────────────────────────────────────────────────
   deploy-docker:
     name: 🐳 DEPLOY - Build Docker Image
     runs-on: ubuntu-22.04
     needs: [analyze-eslint, analyze-typescript, analyze-tests]
-    if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
+    # Build uniquement pour les branches de déploiement (pas feature/*)
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      contains(fromJSON('["refs/heads/master", "refs/heads/staging", "refs/heads/develop"]'), github.ref)
     timeout-minutes: 20
-
     permissions:
       contents: read
       packages: write # Pour push Docker
@@ -492,6 +495,7 @@ jobs:
         uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
         with:
           context: .
+          file: ./prod.Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
