@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Application Maison de champagne",
-  description: "Site et CRM pour maison de champagne",
+  title: "Starter-kit-studio-lois",
+  description: "starter-kit-studio-lois",
 };
 
 export default function RootLayout({
