@@ -35,8 +35,6 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-
-
 ## Développement avec docker
 
 Commencez par lancer le serveur de développement :
@@ -54,6 +52,7 @@ Ouvrez http://localhost:3000 dans votre navigateur pour visualiser le résultat.
 Vous pouvez commencer à modifier la page en modifiant le fichier `app/page.tsx`. La page se met à jour automatiquement au fur et à mesure de vos modifications.
 
 Useful commands
+
 ```bash
 
 # Stop all running containers

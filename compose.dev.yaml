@@ -1,6 +1,6 @@
 services:
   next-app:
-    container_name: next-app
+    container_name: champagne-crm-dev
     build:
       context: ./
       dockerfile: dev.Dockerfile
@@ -19,10 +19,10 @@ services:
 
     # Set environment variables based on the .env file
     env_file:
-      - .env
+      - .env.development
     volumes:
       # Source code
-      - ./app:/app/app                            # ✅ Lien dynamique vers votre code local
+      - ./app:/app/app # ✅ Lien dynamique vers votre code local
       - ./components:/app/components
       - ./lib:/app/lib
       - ./hooks:/app/hooks
@@ -38,7 +38,7 @@ services:
       - ./pnpm-lock.yaml:/app/pnpm-lock.yaml
 
       # Prisma
-      - ./prisma:/app/prisma                      # ⭐ Ajoutez ceci
+      - ./prisma:/app/prisma # ⭐ Ajoutez ceci
 
       # ⭐ IMPORTANT : Exclure node_modules pour éviter les conflits
       - /app/node_modules
@@ -47,14 +47,14 @@ services:
     ports:
       - 3000:3000
     networks:
-      - my_network-champagne-crm
+      - champagne-network
     depends_on:
       postgres:
         condition: service_healthy
 
   # Add more containers below (nginx, postgres, etc.)
   postgres:
-    container_name: postgres-db
+    container_name: champagne-postgres-db
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: postgres
@@ -65,9 +65,9 @@ services:
     ports:
       - 5432:5432
     networks:
-      - my_network-champagne-crm
+      - champagne-network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -78,5 +78,5 @@ volumes:
 # Define a network, which allows containers to communicate
 # with each other, by using their container name as a hostname
 networks:
-  my_network-champagne-crm:
+  champagne-network:
     driver: bridge

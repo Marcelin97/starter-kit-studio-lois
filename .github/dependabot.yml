@@ -1,0 +1,113 @@
+# Configuration Dependabot pour Next.js + GitHub Actions
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+
+updates:
+  # ═══════════════════════════════════════════════════════════════
+  # GitHub Actions - Mise à jour hebdomadaire
+  # ═══════════════════════════════════════════════════════════════
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+
+    # Limiter à 5 PRs simultanées
+    open-pull-requests-limit: 5
+
+    # Labels automatiques
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "security"
+
+    # Message de commit
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+
+    # Assignees
+    assignees:
+      - "Marcelin97"
+
+    # Reviewers
+    reviewers:
+      - "Marcelin97"
+
+  # ═══════════════════════════════════════════════════════════════
+  # npm - Dépendances JavaScript
+  # ═══════════════════════════════════════════════════════════════
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+
+    open-pull-requests-limit: 10
+
+    labels:
+      - "dependencies"
+      - "npm"
+
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+
+    # Grouper les dev dependencies patch/minor
+    groups:
+      dev-dependencies:
+        patterns:
+          - "@types/*"
+          - "eslint*"
+          - "prettier"
+          - "@testing-library/*"
+          - "jest"
+          - "ts-jest"
+        update-types:
+          - "minor"
+          - "patch"
+
+    # Ignorer certaines dépendances (optionnel)
+    ignore:
+    # Exemple: rester sur React 18
+    # - dependency-name: "react"
+    #   versions: ["19.x"]
+
+    # Exemple: mise à jour manuelle de Next.js
+    # - dependency-name: "next"
+    #   update-types: ["version-update:semver-major"]
+
+  # ═══════════════════════════════════════════════════════════════
+  # Docker - Images Docker
+  # ═══════════════════════════════════════════════════════════════
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+
+    labels:
+      - "dependencies"
+      - "docker"
+
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+
+  # ═══════════════════════════════════════════════════════════════
+  # Prisma (optionnel si vous avez un schema Prisma)
+  # ═══════════════════════════════════════════════════════════════
+  # - package-ecosystem: "npm"
+  #   directory: "/"
+  #   schedule:
+  #     interval: "weekly"
+  #   allow:
+  #     - dependency-name: "prisma"
+  #     - dependency-name: "@prisma/client"
+  #   labels:
+  #     - "dependencies"
+  #     - "prisma"

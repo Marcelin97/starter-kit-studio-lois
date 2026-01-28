@@ -1,6 +1,6 @@
 # syntax=docker.io/docker/dockerfile:1
 
-FROM node:24-alpine AS base
+FROM node:22-alpine AS base
 
 # Step 1. Rebuild the source code only when needed
 FROM base AS builder
@@ -51,8 +51,8 @@ FROM base AS runner
 WORKDIR /app
 
 # Don't run production as root
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs \
+    && adduser --system --uid 1001 nextjs
 USER nextjs
 
 COPY --from=builder /app/public ./public
