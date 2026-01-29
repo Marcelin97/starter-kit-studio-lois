@@ -1,63 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍾 Starter Kit
 
-## Getting Started
+Ce projet est un **Starter Kit** conçu par Studio Lois. Il sert de base solide et standardisée pour le développement de projets clients, intégrant les meilleures pratiques modernes et une stack technique robuste.
 
-First, run the development server:
+Ceci est un projet [Next.js](https://nextjs.org) boostrapé avec [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## 🚀 Démarrage Rapide
+
+### Configuration Locale
+
+1. **Installer les dépendances :**
+   ```bash
+   pnpm install
+   ```
+
+2. **Configurer les variables d'environnement :**
+   Copiez le fichier `.env.development` (ou créez un fichier `.env.local`) et ajustez-le si nécessaire.
+
+3. **Préparer la base de données :**
+   ```bash
+   pnpm exec prisma db push
+   pnpm exec prisma db seed
+   ```
+
+4. **Lancer le serveur de développement :**
+   ```bash
+   pnpm dev
+   ```
+
+Ouvrez [http://localhost:3000](http://localhost:3000) pour voir le résultat.
+
+---
+
+## 🐳 Développement avec Docker
+
+Le projet propose des configurations Docker pour différents environnements via des scripts pnpm.
+
+### Environnement de Développement (Hot Reload)
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Lancer l'environnement
+pnpm docker:up
+
+# Voir les logs
+pnpm docker:logs
+
+# Arrêter les conteneurs
+pnpm docker:down
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## Développement avec docker
-
-Commencez par lancer le serveur de développement :
-
+### Environnement de Staging
 ```bash
-# Compiler l'environnement de développement
-docker compose -f compose.dev.yaml build
-
-# Démarrer l'environnement de développement
-docker compose -f compose.dev.yaml up
+pnpm docker:up:staging
 ```
 
-Ouvrez http://localhost:3000 dans votre navigateur pour visualiser le résultat.
-
-Vous pouvez commencer à modifier la page en modifiant le fichier `app/page.tsx`. La page se met à jour automatiquement au fur et à mesure de vos modifications.
-
-Useful commands
-
+### Environnement de Production
 ```bash
-
-# Stop all running containers
-docker kill $(docker ps -aq) && docker rm $(docker ps -aq)
-
-# Free space
-docker system prune -af --volumes
+pnpm docker:up:prod
 ```
+
+---
+
+## 🗄️ Base de données (Prisma)
+
+Le projet utilise Prisma comme ORM. Voici les commandes essentielles :
+
+- **Synchroniser le schéma** (sans migration) : `pnpm exec prisma db push`
+- **Peupler la base de données** : `pnpm exec prisma db seed`
+- **Ouvrir l'interface Prisma Studio** : `pnpm db:studio`
+- **Générer le client Prisma** : `pnpm exec prisma generate`
+
+---
+
+## 🔄 CI/CD
+
+Le projet intègre un pipeline CI/CD complet via **GitHub Actions** pour garantir la qualité et automatiser les déploiements :
+
+- **Build** : Vérification de la compilation Next.js.
+- **Analyse de Qualité** : 
+  - **ESLint** pour le linting.
+  - **Prettier** pour le formatage.
+  - **TypeScript** pour la vérification des types.
+  - **Jest** pour les tests unitaires.
+  - **SonarCloud** pour l'analyse statique du code (sécurité, bugs, maintainabilité).
+- **Déploiement** : Déploiement automatisé selon les branches (Develop, Staging, Master).
+
+---
+
+## 🌿 Flux de Travail Git (Branches)
+
+Nous suivons un modèle de gestion de branches structuré :
+
+- **`master`** : Branche de production. Reflète l'état actuel en production. Seuls les merges de `staging` ou les hotfix y sont autorisés.
+- **`staging`** : Branche de pré-production. Utilisée pour les tests finaux avant déploiement.
+- **`develop`** : Branche principale de développement. Toutes les nouvelles fonctionnalités y sont fusionnées.
+- **`feature/*`** : Branches de fonctionnalités. Créées à partir de `develop` (ex: `feature/user-auth`). Une fois terminée, une PR est ouverte vers `develop`.
+
+---
+
+## 🛠️ Autres commandes utiles
+
+- **Linting** : `pnpm lint`
+- **Formatage** : `pnpm format` (Prettier)
+- **Tests** : `pnpm test`
+- **Nettoyage Docker** :
+  ```bash
+  # Nettoyer les volumes et images inutilisés
+  docker system prune -af --volumes
+  ```
