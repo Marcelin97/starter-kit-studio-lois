@@ -1,113 +1,47 @@
-# Configuration Dependabot pour Next.js + GitHub Actions
-# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
+# Configuration Dependabot simple pour le projet
 version: 2
 
 updates:
-  # ═══════════════════════════════════════════════════════════════
-  # GitHub Actions - Mise à jour hebdomadaire
-  # ═══════════════════════════════════════════════════════════════
+  # GitHub Actions - Vérification hebdomadaire
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "09:00"
-
-    # Limiter à 5 PRs simultanées
-    open-pull-requests-limit: 5
-
-    # Labels automatiques
+    open-pull-requests-limit: 3
     labels:
-      - "dependencies"
+      - "dependabot"
       - "github-actions"
-      - "security"
 
-    # Message de commit
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-
-    # Assignees
-    assignees:
-      - "Marcelin97"
-
-    # Reviewers
-    reviewers:
-      - "Marcelin97"
-
-  # ═══════════════════════════════════════════════════════════════
-  # npm - Dépendances JavaScript
-  # ═══════════════════════════════════════════════════════════════
+  # npm/pnpm - Dépendances JavaScript
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "09:00"
-
-    open-pull-requests-limit: 10
-
+    open-pull-requests-limit: 5
+    # Séparer les mises à jour de sécurité des mises à jour régulières via des labels
     labels:
-      - "dependencies"
-      - "npm"
-
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-
-    # Grouper les dev dependencies patch/minor
+      - "dependabot"
+      - "javascript"
+    
+    # Grouper les petites mises à jour pour éviter d'être submergé
     groups:
-      dev-dependencies:
+      dependencies:
+        applies-to: version-updates
         patterns:
-          - "@types/*"
-          - "eslint*"
-          - "prettier"
-          - "@testing-library/*"
-          - "jest"
-          - "ts-jest"
+          - "*"
         update-types:
-          - "minor"
           - "patch"
+          - "minor"
 
-    # Ignorer certaines dépendances (optionnel)
-    ignore:
-    # Exemple: rester sur React 18
-    # - dependency-name: "react"
-    #   versions: ["19.x"]
-
-    # Exemple: mise à jour manuelle de Next.js
-    # - dependency-name: "next"
-    #   update-types: ["version-update:semver-major"]
-
-  # ═══════════════════════════════════════════════════════════════
   # Docker - Images Docker
-  # ═══════════════════════════════════════════════════════════════
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "09:00"
-
+    open-pull-requests-limit: 3
     labels:
-      - "dependencies"
+      - "dependabot"
       - "docker"
-
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-
-  # ═══════════════════════════════════════════════════════════════
-  # Prisma (optionnel si vous avez un schema Prisma)
-  # ═══════════════════════════════════════════════════════════════
-  # - package-ecosystem: "npm"
-  #   directory: "/"
-  #   schedule:
-  #     interval: "weekly"
-  #   allow:
-  #     - dependency-name: "prisma"
-  #     - dependency-name: "@prisma/client"
-  #   labels:
-  #     - "dependencies"
-  #     - "prisma"
