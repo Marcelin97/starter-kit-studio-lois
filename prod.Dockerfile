@@ -8,15 +8,23 @@ FROM base AS builder
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* pnpm-workspace.yaml* .npmrc* ./
 COPY prisma ./prisma/
 
 # Omit --production flag for TypeScript devDependencies
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
   else echo "Warning: Lockfile not found. It is recommended to commit lockfiles to version control." && yarn install; \
+  fi
+
+# Generate Prisma Client
+RUN \
+  if [ -f yarn.lock ]; then yarn prisma generate; \
+  elif [ -f package-lock.json ]; then npm run prisma:generate || npx prisma generate; \
+  elif [ -f pnpm-lock.yaml ]; then pnpm prisma generate; \
+  else npx prisma generate; \
   fi
 
 COPY app ./app
