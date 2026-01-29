@@ -11,9 +11,15 @@
     "format:check": "prettier --check .",
     "test": "jest",
     "postinstall": "prisma generate",
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
-    "docker:logs": "docker-compose logs -f",
+    "docker:up": "docker compose -f compose.dev.yaml up -d",
+    "docker:up:staging": "docker compose -f compose.staging.yaml up -d",
+    "docker:up:prod": "docker compose -f compose.prod.yaml up -d",
+    "docker:down": "docker compose -f compose.dev.yaml down",
+    "docker:down:staging": "docker compose -f compose.staging.yaml down",
+    "docker:down:prod": "docker compose -f compose.prod.yaml down",
+    "docker:logs": "docker compose -f compose.dev.yaml logs -f",
+    "docker:logs:staging": "docker compose -f compose.staging.yaml logs -f",
+    "docker:logs:prod": "docker compose -f compose.prod.yaml logs -f",
     "db:studio": "prisma studio"
   },
   "jest": {

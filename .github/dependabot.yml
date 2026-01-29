@@ -24,7 +24,7 @@ updates:
     labels:
       - "dependabot"
       - "javascript"
-    
+
     # Grouper les petites mises à jour pour éviter d'être submergé
     groups:
       dependencies:
